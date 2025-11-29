@@ -24,8 +24,8 @@ public class MedicalRecordController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MedicalRecord>> getAllMedicalRecords(){
-        return ResponseEntity.ok(service.getAllMedicalRecords());
+    public ResponseEntity<List<MedicalRecord>> getAllMedicalRecords(@RequestParam Long patientId){
+        return ResponseEntity.ok(service.getMedicalRecordsByPatientId(patientId));
     }
 
 //    @GetMapping("/patient/{patientId}")

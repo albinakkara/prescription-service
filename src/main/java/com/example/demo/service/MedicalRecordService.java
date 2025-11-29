@@ -5,6 +5,7 @@ import com.example.demo.client.PatientClient;
 import com.example.demo.dto.MedicalRecordRequest;
 import com.example.demo.entity.MedicalRecord;
 import feign.FeignException;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,10 @@ public class MedicalRecordService {
 
     public Long createMedicalRecordWithPrescription(MedicalRecordRequest request) {
 //        validate patient and doctor ids
+        System.out.println(request.getDoctorId());
         assertDoctorExists(request.getDoctorId());
         assertPatientExists(request.getPatientId());
+//        validate the consultation Id
 
         // Create MedicalRecord
         MedicalRecord medicalRecord = new MedicalRecord();
@@ -76,6 +79,8 @@ public class MedicalRecordService {
         } catch (FeignException.NotFound e) {
             throw new RuntimeException("Patient not found");
         } catch (FeignException e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.status());
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Patient service unavailable", e);
         }
@@ -90,6 +95,11 @@ public class MedicalRecordService {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Doctor service unavailable", e);
         }
+    }
+
+    public @Nullable List<MedicalRecord> getMedicalRecordsByPatientId(Long patientId) {
+        List<MedicalRecord> medicalRecords = repo.findMedicalRecordsByPatientId(patientId);
+        return medicalRecords;
     }
 
 //    public List<Prescription> getPatientPrescriptions(Long patientId) {
